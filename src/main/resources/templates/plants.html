@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Plant Suggestions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
+
+    <link rel="stylesheet" href="/css/fragments.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        * {
+            font-weight: 400;
+            font-size: 14px;
+        }
+
+        /* *,
+        ::after,
+        ::before {
+            box-sizing: border-box;
+        }
+
+        .btn {
+            margin-top: 0px;
+        }
+
+        .content {
+            margin-top: 20px;
+            margin-left: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            text-decoration: inherit;
+            border: 3px solid;
+            padding: 13px 80px;
+            background-color: rgb(124, 191, 66);
+            border-color: rgb(107, 165, 56);
+            color: rgb(255, 255, 255);
+            border-radius: 5px;
+        }
+
+        .button:hover {
+            -webkit-transition: 200ms ease-in;
+            -moz-transition: 200ms ease-in;
+            -o-transition: 200ms ease-in;
+            transition: 200ms ease-in;
+            background-color: rgba(255, 255, 255, 0);
+            border-color: rgb(107, 165, 56);
+            color: rgb(124, 191, 66);
+        }
+
+        .table {
+            border-collapse: collapse;
+            margin: 30px 0;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .tbl {
+            max-height: 450px;
+            overflow-y: auto;
+            margin-top: 30px;
+        }
+
+        .table thead .tr-thead {
+            background-color: rgb(107, 165, 56);
+            color: rgb(255, 255, 255);
+            text-align: start;
+            position: sticky;
+            top: 0;
+        }
+
+        .table td,
+        th {
+            padding: 12px 15px;
+        }
+
+        .table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+        .table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .table tbody tr:last-of-type {
+            border-bottom: 2px solid rgb(107, 165, 56);
+        } */
+
+        /* MODIFICATIONS */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding-top: 20px;
+            padding-left: 24px;
+            padding-right: 24px;
+            padding-bottom: 25px;
+        }
+
+        .table-app {
+            min-width: 700px;
+        }
+
+        .table-handler {
+            margin-bottom: 16px;
+        }
+
+        .table-handler>* {
+            display: inline-block;
+        }
+
+        .table-handler-dropdown-cell {
+            padding-right: 16px;
+        }
+
+        .table-wrapper {
+            height: 55vh;
+            overflow-y: scroll;
+            margin-bottom: 4%;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-head {
+            line-height: 48px;
+        }
+
+        .table-head th {
+            font-size: larger;
+            position: sticky;
+            top: 0px;
+            color: #fff;
+            background-color: rgb(107, 165, 56);
+            font-weight: bolder;
+        }
+
+        .table-row {
+            line-height: 48px;
+            color: #111;
+        }
+
+        .plant-item:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+
+        .plant-item:nth-child(odd) {
+            background-color: #eeeeee;
+        }
+
+        .table-cell {
+            white-space: nowrap;
+            padding: 0 10px;
+            font-size: 14px;
+        }
+
+
+        * {
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+
+        #plant-item td {
+            text-align: center;
+        }
+
+        #plant-name {
+            text-align: start;
+            font-weight: bolder;
+            color: rgb(91, 88, 88);
+        }
+
+
+        small {
+            color: antiquewhite;
+        }
+
+        body {
+            background-image: url(/images/containerBack.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .button {
+            display: inline-block;
+            text-decoration: inherit;
+            border: 3px solid;
+            padding: 13px 40px;
+            /* margin: 20px; */
+            background-color: rgb(124, 191, 66);
+            border-color: rgb(107, 165, 56);
+            color: rgb(255, 255, 255);
+            border-radius: 5px;
+        }
+
+        .button:hover {
+            -webkit-transition: 200ms ease-in;
+            -moz-transition: 200ms ease-in;
+            -o-transition: 200ms ease-in;
+            transition: 200ms ease-in;
+            background-color: rgba(255, 255, 255, 0);
+            border-color: rgb(107, 165, 56);
+            color: rgb(124, 191, 66);
+        }
+
+        .form-container {
+            margin-top: 1%;
+            padding-bottom: 2%;
+        }
+
+        .regionDesc {
+            display: flex;
+            background: rgba(243, 230, 214, 0.681);
+            padding: 15px;
+            border-radius: 7px;
+
+            height: 200px;
+            background-position-y: center;
+        }
+
+        .regionDesc p {
+            text-align: center;
+            font-weight: bolder;
+            color: black;
+            padding-right: 10px;
+            font-size: 20px;
+            width: 40%;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        li span {
+            text-decoration: none;
+            font-weight: 800;
+            font-size: larger;
+            color: black;
+            /* margin: 20px; */
+            /* left: revert; */
+        }
+
+        h5 {
+            font-weight: bolder;
+            font-size: large;
+            color: antiquewhite;
+            margin-top: 20px;
+        }
+
+        p {
+            max-width: 50%;
+            flex: 1;
+        }
+
+        .list {
+            list-style-type: none;
+            margin-top: 20px;
+
+        }
+
+        .space {
+            width: 100px;
+        }
+
+        tbody tr td a {
+            text-decoration: none;
+            color: rgb(107, 165, 56);
+            font-weight: bolder;
+        }
+
+        tbody tr td ahover {
+            text-decoration: none;
+            color: grey;
+            font-weight: bolder;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div th:include="fragments :: navigation"></div>
+    <div th:include="fragments :: deleteModal"></div>
+
+    <div class="content">
+        <div class="container">
+            <h4 class="title">Plants Recommendations Space</h4>
+            <div class="regionDesc">
+                <p th:text="${regionDescription}"></p>
+                <div class="space"></div>
+                <ul class="list">
+                    <h5>Most favorable sectors in your region</h5>
+
+                    <div th:if="${recommendedSectors != null and not recommendedSectors.isEmpty()}">
+
+                        <li th:each="entry : ${recommendedSectors.entrySet()}">
+                            <span th:text="${entry.key + ' ' + entry.value + '%'}"></span><br>
+                        </li>
+                    </div>
+
+                </ul>
+            </div>
+            <div class="form-container">
+                <h4 style="padding-top: 10px;">
+                    Get plants Suggestions
+                    <small class="">Select your preferences</small>
+                </h4>
+                <form th:action="@{/eagri/clients/plantSuggestion}" method="post" id="plantSuggestionForm">
+
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <select id="season" name="season" class="form-select">
+                                <option value="">Choose a season</option>
+                                <option value="Spring">Spring</option>
+                                <option value="Summer">Summer</option>
+                                <option value="Autumn">Autumn</option>
+                                <option value="Winter">Winter</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <select id="type" name="sector" class="form-select">
+                                <option value="">Choose a plant sector</option>
+                                <option value="All">All</option>
+                                <option value="Citrus Fruits">Citrus Fruits</option>
+                                <option value="Cereal Crops">Cereal crops</option>
+                                <option value="Oilseed Sector">Oilseed sector</option>
+                                <option value="Olives and Olive Oil">Olives and olive oil</option>
+                                <option value="Market Gardening Sector">Market gardening sector</option>
+                                <option value="Date Palms">Date palm sector</option>
+                                <option value="Saffron Sector">Saffron sector</option>
+                                <option value="Sugar Sector">Sugar sector</option>
+                                <option value="Fruit Trees">Fruit trees</option>
+                                <option value="Herbs and Spices">Herbs and spices</option>
+                                <option value="Medicinal and Aromatic Plants">Medicinal and Aromatic Plants</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <button class="button" type="submit" value="" id="submitBtn">Get
+                                Recommendations</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <h4>All the possible plants to harvest during this season </h4>
+            <div class="table-wrapper" id="defaultTable">
+                <table class="table">
+                    <thead>
+                        <tr class="table-head">
+                            <th class="table-cell align-right">Plant</th>
+                            <th class="table-cell align-right">Type</th>
+                            <th class="table-cell align-right">Humidity</th>
+                            <th class="table-cell align-right">Average humidity</th>
+                            <th class="table-cell align-right">Temperature</th>
+                            <th class="table-cell align-right">Average temperature</th>
+                            <th class="table-cell align-right">Average rain</th>
+                            <th class="table-cell align-right">Watering</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="plant-item" th:each="plant, row : ${plants}" data-row-id="${row.index}">
+                            <td id="plant-name" style="cursor: pointer;">
+                                <a th:href="@{/eagri/clients/plant/{name}(name=${plant.name})}"
+                                    th:text="${plant.name}"></a>
+                            </td>
+                            <td th:text="${plant.sector}"></td>
+
+                            <td th:text="${plant.min_humidity +'-'+plant.max_humidity+' %'}"></td>
+                            <td class="humidity" th:text="${humidity}" data-row-id="${row.index}" id="avgHumidity"></td>
+                            <td hidden th:text="${plant.min_humidity}" id="minHumidity"></td>
+                            <td hidden th:text="${plant.max_humidity}" id="maxHumidity"></td>
+
+                            <td th:text="${plant.min_temperature +'-'+plant.max_temperature+' °C'}"></td>
+                            <td th:text="${temperature}" data-row-id="${row.index}" class="temperature"
+                                id="avgTemerature"></td>
+                            <td hidden th:text="${plant.min_temperature}" id="minTemp"></td>
+                            <td hidden th:text="${plant.max_temperature}" id="maxTemp"></td>
+
+                            <td th:text="${rain}" data-row-id="${row.index}" class="rain"></td>
+                            <td th:text="${plant.min_watering +'-'+plant.max_watering+' mm'}"></td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('a[data-toggle="modal"]').click(function (e) {
+                e.preventDefault();
+                var target = $(this).attr('href');
+                $(target).modal('show');
+            });
+        });
+
+        var humidityElements = document.getElementsByClassName('humidity');
+        var rainElements = document.getElementsByClassName('rain');
+        var temperatureElements = document.getElementsByClassName('temperature');
+
+        var decimalPlaces = 2;
+
+        for (var i = 0; i < humidityElements.length; i++) {
+            var humidityElement = humidityElements[i];
+            var row = humidityElement.closest('tr'); // Get the parent row with closest()
+            var rowId = row.getAttribute('data-row-id');
+            var humidity = parseFloat(humidityElement.textContent);
+            var roundedHumidity = humidity.toFixed(decimalPlaces) + ' %';
+            row.querySelector('.humidity').textContent = roundedHumidity;
+        }
+
+        for (var i = 0; i < rainElements.length; i++) {
+            var rainElement = rainElements[i];
+            var row = rainElement.closest('tr'); // Get the parent row with closest()
+            var rowId = row.getAttribute('data-row-id');
+            var humidity = parseFloat(rainElement.textContent);
+            var roundedRain = humidity.toFixed(decimalPlaces) + ' mm';
+            row.querySelector('.rain').textContent = roundedRain;
+        }
+
+        for (var i = 0; i < temperatureElements.length; i++) {
+            var temperatureElement = temperatureElements[i];
+            var row = temperatureElement.closest('tr'); // Get the parent row with closest()
+            var rowId = row.getAttribute('data-row-id');
+            var humidity = parseFloat(temperatureElement.textContent);
+            var roundedTemp = humidity.toFixed(decimalPlaces) + ' °C';
+            row.querySelector('.temperature').textContent = roundedTemp;
+        }
+
+        var humidityElements = document.getElementsByClassName('humidity');
+
+        for (var i = 0; i < humidityElements.length; i++) {
+            var avgHumidityElement = humidityElements[i];
+            var minHumidityElement = avgHumidityElement.nextElementSibling;
+            var maxHumidityElement = minHumidityElement.nextElementSibling;
+
+            var avgHumidity = parseFloat(avgHumidityElement.textContent);
+            var minHumidity = parseFloat(minHumidityElement.textContent);
+            var maxHumidity = parseFloat(maxHumidityElement.textContent);
+
+            if (avgHumidity >= minHumidity && avgHumidity <= maxHumidity) {
+                avgHumidityElement.innerHTML = '<i class="fas fa-caret-up" style="color: #15a013;"></i> ' + avgHumidity + ' %';
+                avgHumidityElement.style.color = "#15a013";
+            } else {
+                avgHumidityElement.innerHTML = '<i class="fas fa-caret-down" style="color: #ec2913;"></i> ' + avgHumidity + ' %';
+                avgHumidityElement.style.color = "#ec2913";
+            }
+        }
+
+        var temperatureElements = document.getElementsByClassName('temperature');
+
+        for (var i = 0; i < temperatureElements.length; i++) {
+            var avgTempElement = temperatureElements[i];
+            var minTempElement = avgTempElement.nextElementSibling;
+            var maxTempElement = minTempElement.nextElementSibling;
+
+            var avgTemperature = parseFloat(avgTempElement.textContent);
+            var minTemp = parseFloat(minTempElement.textContent);
+            var maxTemp = parseFloat(maxTempElement.textContent);
+
+            if (avgTemperature >= minTemp && avgTemperature <= maxTemp) {
+                avgTempElement.innerHTML = '<i class="fas fa-caret-up" style="color: #15a013;"></i> ' + avgTemperature + ' °C';
+                avgTempElement.style.color = "#15a013";
+            } else {
+                avgTempElement.innerHTML = '<i class="fas fa-caret-down" style="color: #ec2913;"></i> ' + avgTemperature + ' °C';
+                avgTempElement.style.color = "#ec2913";
+            }
+        }
+
+    </script> 
+
+</body>
+
+</html>

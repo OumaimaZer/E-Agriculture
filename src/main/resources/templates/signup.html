@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<title>User Registration</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+crossorigin=""/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+crossorigin=""></script>
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+
+<style>
+  
+  *{
+    font-family: sans-serif;
+  }
+  body{
+      background-image: url(/images/background.jpg);
+      background-size: cover;
+      background-position: left;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      display: flex;
+  }
+  .container{
+    border: none;
+    /* max-width:750px;*/
+    max-width: max-content;
+    padding-left: 70px;
+    padding-right: 110px;
+    border-radius:25px;
+    margin-top: 1px;
+    margin-left: 20%;
+    /* margin-right: auto;  */
+    margin-bottom: 15px;
+    background: beige;
+    opacity: 0.9;
+    align-items: center;
+  }
+  .container form{
+      max-width: 700px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      /* margin: 10px 0 12px 0;   */
+  }
+input[type="text"],
+input[type="password"] , 
+input[type="email"]{
+  background: none;
+    display: flex;
+    border: 3px solid green;
+    padding: 14px 10px;
+    width: 100%;
+    border-radius: 15px;
+   /* margin:0px 15px 0 10px;*/
+   margin-top: 8px;
+   margin-left: 5px;
+   margin-bottom: 17px;
+    outline: none;
+}
+  button[type="submit"] {
+    background-color: rgb(69, 138, 69);
+    color: white;
+    padding: 14px 20px;
+    margin-bottom: 17px;
+    margin-left: 7px;
+    margin-top: 11px;
+    border: none;
+    cursor: pointer;
+    width: 200px;
+    border-radius: 5px;
+  }
+button[type="submit"]:hover{
+    background-color: green;
+  }
+h3{
+    color: rgb(8, 63, 12);
+    align-self: center;
+    font-size: larger;
+    margin-bottom: 19px;
+    display: block;
+}
+.pass_eye{
+    margin-left: 30px;
+    cursor: pointer;
+}
+  label{
+    margin-left: 9px;
+  }
+
+  #link {
+    text-align: center;
+    display: inline-block;
+    text-decoration: none;
+  }
+  #link:hover{
+    background-color: green;
+  }
+  #map{
+        height: 380px;
+        width: 100%;
+        margin-left: 7px;
+        margin-top: 10px;
+        opacity: 1.0;
+        border: black solid;
+  }
+  .leaflet-control-geocoder-form input {
+    font-size: 120%;
+    border:3px solid green;
+    margin-right: 15px;
+    margin-top: 10px;
+    border-radius: 11px;
+    background-color: white;
+    width: 200px;
+    height: fit-content;
+}
+
+</style>
+</head>
+<body>
+
+  <div class="container">
+    <h3>Create your E-agriculture account</h3>
+    <form  id="signup_form1" th:action="@{/eagri/clients/auth/signup}" method="POST" th:object="${user}" style="display: flex;">                            
+      <div id="popup" style="display: none; border-style: solid; padding: 7px; margin: 5px; color: red; background-color: rgba(255, 0, 0, 0.221); width: 100%; margin-bottom: 8px;">
+        <p id="message" th:text="${message}" ></p>
+    </div>
+        <div class="form-groupe">
+            <label for="f_name">First name</label>
+            <input id="f_name" type="text" name="f_name" th:field="*{f_name}" placeholder="Enter your first name" autofocus>
+        </div>
+        <div class="form-groupe">
+            <label for="l_name">Last name</label>
+            <input id="l_name" type="text" name="l_name" th:field="*{l_name}" placeholder="Enter your last name">
+        </div>
+        <div class="form-groupe">
+            <label for="email">Email</label>
+            <input id="email" type="email" name="email" th:field="*{email}" placeholder="Enter your email" >
+        </div>
+        <div class="form-groupe">
+            <label for="phone">Phone number</label>
+            <input id="phone" type="text" name="phone"  maxlength="10" th:field="*{phone}" placeholder="Enter your phone number">
+        </div>
+        <div class="form-groupe">
+            <label for="password">Password</label>
+            <input id="password" type="password" name="password" th:field="*{password}" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;">
+            <i class="pass_eye" id="pass_eye_id" ></i>
+        </div>
+        <div class="form-groupe">
+            <label for="password_confirm" class="password_conf">Password confirmation</label>
+            <input id="password_confirm" type="password" name="password_confirm" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;">
+            <i class="pass_eye" id="pass_eye_id" ></i>
+        </div>
+        <label for="map">Choose your agriculture zone</label>
+        <div class="map" id="map" th:object="${agricultureZone}">
+        <input type="hidden" id="name" name="name" th:value="${name}" >
+        <input type="hidden" id="latitude" name="latitude" th:value="${latitude}" >
+        <input type="hidden" id="longitude" name="longitude" th:value="${longitude}">
+        <input type="hidden" id="country" name="country" th:value="${country}">
+        </div>
+      <button id="submit-button" type="submit" onclick="passwordMatch()">Sign up</button><br>
+        </form>
+        <label for="link" style="margin-bottom: 10px;">Already have an account ? <a th:href="@{/eagri/clients/auth/login}" id="link">Sign in instead</a></label>
+    </div>
+
+<script th:inline="javascript">
+  var message = document.getElementById("message").textContent;
+
+if (message) {
+   document.getElementById("popup").style.display = "block";
+}
+  function passwordMatch(){
+  
+    document.getElementById('password_confirm').setCustomValidity('');
+
+    var password1 = document.getElementById('password');
+    var password2 = document.getElementById('password_confirm');
+    var url = window.location.protocol + '//' + window.location.host;
+
+    if((password1.value!==password2.value)){
+      document.getElementById('password_confirm').setCustomValidity('Passwords do not match');
+      passwordMatch();
+    }else {
+      document.getElementById('password_confirm').setCustomValidity('');
+      // window.alert("Resgistration Successful ! Click Ok to go to your homepage");
+    }
+  }
+  let mapClicked = false ; 
+  var message = document.getElementById("message").textContent;
+
+  const pass_eye_id = document.querySelector('#pass_eye_id');
+
+  const password1 = document.querySelector('password');
+
+  pass_eye_id.addEventListener('click',function(e){
+    const type = password.getAttribute('type')==='password' ? 'text':'password';
+    password.setAttribute('type',type);
+    this.classList.toggle('pass_eye');
+  });
+
+  const password2 = document.querySelector('password_confirm');
+  pass_eye_id.addEventListener('click',function(e){
+    const type = password.getAttribute('type')==='password_confirm' ? 'text':'password_confirm';
+    password.setAttribute('type',type);
+    this.classList.toggle('pass_eye');
+  });
+
+  const map = L.map('map').setView([31.7917, -7.0926], 5);
+    
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    //search box
+    L.Control.geocoder().addTo(map);
+
+    var longitue ; 
+    var latitude ; 
+    var marker ; 
+
+    const apiKey = "d912178d0598502d5d6199eecf98e890";
+
+    function onMapClick(e){
+    if (marker) {
+        map.removeLayer(marker);
+    }
+
+    latitude = e.latlng.lat ;
+    longitude = e.latlng.lng ; 
+    
+    document.getElementById('latitude').value = latitude;
+    document.getElementById('longitude').value = longitude; 
+
+    fetch('https://api.openweathermap.org/data/2.5/weather?lat='+latitude+'&lon='+longitude+'&appid='+apiKey) 
+    .then(function(resp) { return resp.json() }) // Convert data to json
+    .then(function(data) {
+    var name = data.name; 
+    var country = data.sys.country ; 
+    document.getElementById('country').value = country ; 
+    document.getElementById('name').value = name; 
+    marker = L.marker(e.latlng).addTo(map)
+        .bindPopup("You clicked the map at " +name +" : "
+        + e.latlng.toString()).openPopup();
+  }) 
+    mapClicked =true ; 
+  
+  }map.on('click',onMapClick);
+
+  const form = document.querySelector('#signup_form1');  
+  form.addEventListener('submit', function(event) {
+    const latitude = document.querySelector('#latitude').value;
+    const longitude = document.querySelector('#longitude').value;
+    const name = document.querySelector('#name').value; 
+    if (!latitude || !longitude || !name) {
+      event.preventDefault(); // prevent form submission
+      alert('Please choose your agriculture zone . '); // show alert message
+    }
+  });
+</script>
+
+<canvas id="myChart"></canvas>
+
+<script>
+  // Fetch weather data from the REST endpoint
+  fetch('/eagri/clients/submit')
+      .then(response => response.json())
+      .then(data => {
+          // Create a chart using the weather data
+          var ctx = document.getElementById('myChart').getContext('2d');
+          var myChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                  labels: ['Average Temperature', 'Average Humidity', 'Average Pressure', 'Total Precipitation', 'Total Rain'],
+                  datasets: [{
+                      label: 'Weather Data',
+                      data: [data.averageTemp, data.averageHumidity, data.averagePressure, data.totalPrecipitation, data.totalRain],
+                      backgroundColor: [
+                          'rgba(255, 99, 132, 0.2)',
+                          'rgba(54, 162, 235, 0.2)',
+                          'rgba(255, 206, 86, 0.2)',
+                          'rgba(75, 192, 192, 0.2)',
+                          'rgba(153, 102, 255, 0.2)'
+                      ],
+                      borderColor: [
+                          'rgba(255, 99, 132, 1)',
+                          'rgba(54, 162, 235, 1)',
+                          'rgba(255, 206, 86, 1)',
+                          'rgba(75, 192, 192, 1)',
+                          'rgba(153, 102, 255, 1)'
+                      ],
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  scales: {
+                      y: {
+                          beginAtZero: true
+                      }
+                  }
+              }
+          });
+      });
+</script>
+
+</body>
+</html>

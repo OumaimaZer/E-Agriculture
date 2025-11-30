@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Plant Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
+    <link rel="stylesheet" href="/css/fragments.css">
+
+    <style>
+        .container {
+            margin-top: 2%;
+        } 
+        .backArrow {
+            font-size: 25px;
+            line-height: 25px;
+            width: 1em;
+            height: 1em;
+            padding: 6px;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            transform: rotate(180deg);
+            color: white;
+            border: 2px solid white;
+            border-radius: 50%;
+            -webkit-touch-callout: none;
+            -khtml-user-select: none;
+        }
+
+        .backArrow:hover {
+            background: rgba(255, 255, 255, .5);
+        }
+
+        .backArrow:active {
+            position: relative;
+            right: 2px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        a,
+        a:visited {
+            color: inherit;
+        }
+
+        body {
+            background-image: url(/images/secondBack.png);
+            background-size: cover;
+            background-position: left;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        /* body::after {
+            background-color: white;
+            content: "";
+            inset: 0;
+            opacity: 0.75;
+            position: absolute;
+            z-index: 1;
+        } */
+        .container {
+            background: rgba(243, 230, 214, 0.681);
+            border-radius: 3rem;
+            box-shadow: 0 0.5rem 1.5rem -0.375rem rgba(0, 0, 0, 0.21);
+            display: flex;
+            height: calc(80vh - 8rem);
+            max-height: 900px;
+            max-width: 1200px;
+            overflow: hidden;
+            position: relative;
+            padding-left: 1px;
+            width: calc(70vw - 8rem);
+            z-index: 2;
+        }
+        .image-container {
+            position: relative;
+            z-index: 0;
+        }
+        .image-attribution {
+            background-color: rgba(0, 0, 0, 0.5);
+            bottom: 0;
+            color: white;
+            font-family: sans-serif;
+            left: 0;
+            padding: 1rem 2rem;
+            position: absolute;
+            right: 0;
+            z-index: 1;
+            backdrop-filter: blur(4px);
+        }
+
+        .image-attribution>p:first-child {
+            font-size: 1.25rem;
+            line-height: 1.875rem;
+        }
+
+        .image-attribution>p:last-child {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            opacity: 0.8;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        .swatch {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 0 1rem;
+            cursor: pointer;
+        }
+
+        .swatch:nth-child(1) {
+            border-radius: 0 1.5rem 0 0;
+        }
+
+        .swatch:nth-child(5) {
+            border-radius: 0 0 1.5rem 0;
+        }
+
+        .swatch-container {
+            display: grid;
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .thumbnail {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+
+        @media screen and (orientation: landscape) {
+            .container {
+                flex-direction: row;
+            }
+
+            .container>div {
+                height: 100%;
+                width: 50%;
+            }
+        }
+
+        @media screen and (orientation: portrait) {
+            .container {
+                flex-direction: column;
+            }
+
+            .container>div {
+                height: 50%;
+                width: 100%;
+            }
+
+            .swatch:nth-child(1) {
+                border-radius: 0;
+            }
+
+            .swatch:nth-child(5) {
+                border-radius: 0 0 1.5rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+ 
+<body>
+    <div th:include="fragments :: navigation"></div> 
+
+    <div class="row">
+        <a th:href="@{/eagri/clients/plantSuggestion}"><i class="fas fa-arrow-circle-left"></i></a>
+    </div>
+
+    <div class="container">
+        <div class="image-container">
+            <img class="thumbnail" th:src="${plantApi.imageUrl}" alt="Plant Image" />
+            <div class="image-attribution">
+                <p th:text="${plant.name}"></p>
+                <p><a href="https://unsplash.com/photos/12IHVEFRacQ" target="_blank"></a></p>
+            </div>
+        </div>
+        <div class="swatch-container">
+            <div class="swatch"><strong>Temperature:</strong> [[${plant.min_temperature}]]-[[${plant.max_temperature}]]
+                °C</div>
+            <div class="swatch"><strong>Humidity:</strong> [[${plant.min_humidity}]]-[[${plant.max_humidity}]] %</div>
+            <div class="swatch"><strong>Watering:</strong> [[${plant.min_watering}]]-[[${plant.max_watering}]] mL</div>
+            <div class="swatch"><strong>Season:</strong> [[${plant.season}]]</div>
+            <div class="swatch"><strong>Scientific name:</strong> [[${plantApi.scientificName}]]</div>
+            <div class="swatch"><strong>Growth period (in days):</strong> [[${plant.growthPeriodInDays}]]</div>
+        </div>
+    </div>
+
+</body>
+
+</html>

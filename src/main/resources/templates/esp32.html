@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+
+    <title>Monitoring Space</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <link rel="stylesheet" href="/css/fragments.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        .form-container {
+            margin-top: 40px;
+        } 
+        .button {
+            display: inline-block;
+            text-decoration: inherit;
+            border: 3px solid;
+            padding: 13px 80px;
+            background-color: rgb(124, 191, 66);
+            border-color: rgb(107, 165, 56);
+            color: rgb(255, 255, 255);
+            border-radius: 5px;
+        }
+
+        .button:hover {
+            -webkit-transition: 200ms ease-in;
+            -moz-transition: 200ms ease-in;
+            -o-transition: 200ms ease-in;
+            transition: 200ms ease-in;
+            background-color: rgba(255, 255, 255, 0);
+            border-color: rgb(107, 165, 56);
+            color: rgb(124, 191, 66);
+        }
+
+        * {
+            font-weight: 400;
+            font-size: 14px;
+        }
+
+        .content {
+            margin-top: 20px;
+            margin-left: 20px;
+            padding: 5px;
+        }
+
+        .chartsContainer {
+            display: flex;
+
+        }
+
+        body {
+            background-image: url(/images/containerBack.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .container .map-container {
+            margin: 8px;
+            width: 100%;
+            justify-content: flex-end;
+            padding-bottom: 10px;
+        }
+
+        .container .map-container .map-title {
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .container .map-container .map {
+            height: 300px;
+            padding-bottom: 10px;
+            width: 100%;
+        }
+
+        .btn-send {
+            display: inline-block;
+            text-decoration: inherit;
+            border: 3px solid;
+            padding: 13px 30px;
+            /* margin: 20px; */
+            background-color: rgb(124, 191, 66);
+            border-color: rgb(107, 165, 56);
+            color: rgb(255, 255, 255);
+            border-radius: 5px;
+            height: fit-content;
+            margin: 1%;
+        }
+
+        .btn-send:hover {
+            -webkit-transition: 200ms ease-in;
+            -moz-transition: 200ms ease-in;
+            -o-transition: 200ms ease-in;
+            transition: 200ms ease-in;
+            background-color: rgba(255, 255, 255, 0);
+            border-color: rgb(107, 165, 56);
+            color: rgb(124, 191, 66);
+        }
+        .btn-danger{
+            display: inline-block;
+            text-decoration: inherit;
+            border: 3px solid;
+            padding: 13px 30px; 
+            background-color: red;
+            border-color: red;
+            height: fit-content;
+            color: rgb(255, 255, 255);
+            border-radius: 5px;
+            margin: 1%;
+        }
+        .btn-danger:hover {
+            -webkit-transition: 200ms ease-in;
+            -moz-transition: 200ms ease-in;
+            -o-transition: 200ms ease-in;
+            transition: 200ms ease-in;
+            background-color: rgba(255, 255, 255, 0);
+            border-color: red;
+            color: red;
+        }
+        .container {
+            display: flex;
+            background: rgba(243, 230, 214, 0.681);
+            padding: 15px;
+            border-radius: 7px;
+            padding-bottom: 20px;
+            height: 365px;
+            background-position-y: center;
+        }
+
+        .container p {
+            text-align: center;
+            font-weight: bolder;
+            color: black;
+            padding-right: 10px;
+            font-size: 20px;
+            width: 40%;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        .container .contact-form input {
+            width: 200px;
+            padding: 5% 5%;
+            color: #242424;
+            margin-bottom: 10px;
+            border: 1px solid #B7B7B7;
+        }
+
+        .container .contact-form {
+            margin: 8px;
+        }
+
+        .space {
+            width: 10em;
+        }
+
+        .rainDiv {
+            width: 100%;
+        }
+
+        .table-wrapper {
+            margin-bottom: 6px;
+            margin-top: 2%;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-head {
+            line-height: 48px;
+        }
+
+        .table-head th {
+            font-size: larger;
+            position: sticky;
+            top: 0px;
+            color: #fff;
+            background-color: rgb(107, 165, 56);
+            font-weight: bolder;
+        }
+
+        .table-row {
+            line-height: 48px;
+            color: #111;
+        }
+
+        .current-item {
+            background-color: #f8f8f8;
+        }
+
+        .table-cell {
+            padding: 0 10px;
+            font-size: 14px;
+        }
+
+        * {
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+
+        #current-item td {
+            text-align: center;
+        }
+
+        #macs-form {
+            margin-top: 2%;
+            width: fit-content;
+        }
+
+        .macs-container {
+            background-color: rgba(243, 230, 214, 0.681);
+            padding: 10px;
+            width: 300px;
+            margin-left: 8%;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .btn-send {
+            margin-top: 1%;
+        }
+
+        .alert {
+            padding: 10px;
+            background-color: #d72534;
+            color: #FFFF;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .form-select {
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+
+        #error {
+            color: red;
+            font-size: xx-large;
+            font-weight: bold;
+            background-color: rgba(243, 230, 214, 0.681);
+            width: fit-content;
+            max-width: fit-content;
+            border-radius: 5px;
+            margin-top: 2%;
+            padding: 4px;
+            margin-left: 8%;
+        }
+        .btn-container{
+            display: flex;
+            margin-left: 4.8%;
+        }
+        .charts{
+            margin-top: 2%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div th:include="fragments :: navigation"></div>
+    <div th:include="fragments :: deleteModal"></div>
+
+    <div class="content">
+        <h4 class="title">Monitoring Space</h4>
+
+        <div class="btn-container">
+            <a class="btn-send" th:href="@{/eagri/clients/monitor/}">Update your monitors</a>
+            <button class="btn-danger" id="openModalBtn">Delete a monitor</button>
+        </div>
+        <div class="container">
+
+            <div class="contact-form">
+                <h5 class="">Add a new microcontroller</h5>
+                <form th:action="@{/eagri/clients/monitoring/save/user_esp}" method="post" id="form">
+                    <div th:object="${agriZone}">
+                        <div id="alertMessage" class="alert" style="display: none;">Must choose a location in the map
+                        </div>
+                        <input type="hidden" id="latitude" name="latitude" th:value="${latitude}">
+                        <input type="hidden" id="longitude" name="longitude" th:value="${longitude}">
+                        <input type="hidden" id="city" name="city" th:value="${city}">
+                        <input type="hidden" id="country" name="country" th:value="${country}">
+                    </div>
+                    <input type="text" name="mac" placeholder="ESP's MAC address" required />
+                    <button class="btn-send" type="submit">Add</button>
+                </form>
+            </div>
+            <div class="space"></div>
+
+            <div class="map-container">
+                <h5 class="">Choose your agriculture zone</h5>
+                <div class="map" id="map"></div>
+            </div>
+        </div>
+
+        <div th:if="${error != null}" th:style="${error} ? 'display:block;' : 'display:none;'">
+            <p th:text="${error}" id="error"></p>
+        </div>
+
+        <div id="data" th:if="${newEsp != null}">
+            <h4 class="title">Select a monitor</h4>
+            <div class="macs-container">
+                <form th:action="@{/eagri/clients/monitoring/history}" method="post">
+                    <select name="mac" class="form-select" id="macselect">
+                        <option value="">Mac address</option>
+                        <option th:each="mac : ${macs}" th:value="${mac}" th:text="${mac}"></option>
+                    </select>
+                    <button class="btn-send" type="submit">Submit</button>
+                </form>
+            </div>
+
+            <div class="table-wrapper" id="defaultTable">
+                <h5>Current weather data in your agriculture zone</h5>
+                <table class="table">
+                    <thead>
+                        <tr class="table-head">
+                            <th class="table-cell align-right">Time</th>
+                            <th class="table-cell align-right">Rain</th>
+                            <th class="table-cell align-right">Temperature</th>
+                            <th class="table-cell align-right">Humidity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="current-item" th:each="row : ${newEsp}">
+                            <td th:text="${row.time}"></td>
+                            <td th:text="${row.rain}"></td>
+                            <td th:text="${row.temperature}"></td>
+                            <td th:text="${row.humidity}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="form-container">
+
+                <h4 style="padding-top: 10px;">
+                    Get land's history
+                    <small class="">Based on your wireless microcontroller</small>
+                </h4>
+
+            </div>
+
+            
+        </div>
+
+        <div class="charts" th:if="${espHistory!=null}" >
+            <div class="chartsContainer">
+                <canvas id="temperatureChart"></canvas>
+                <canvas id="humidityChart"></canvas>
+            </div>
+
+            <div class="rainDiv">
+                <canvas id="rainChart"></canvas>
+            </div>
+        </div>
+        <div class="modal" id="espModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Choose ESP</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <select id="espSelect" class="form-select">
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" id="deleteBtn">Delete</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+
+$(document).ready(function () {
+    $('a[data-toggle="modal"]').click(function (e) {
+        e.preventDefault();
+        var target = $(this).attr('href');
+        $(target).modal('show');
+    });
+});
+        var map = L.map('map').setView([31.7917, -7.0926], 5);
+
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // search box
+        L.Control.geocoder().addTo(map);
+
+        var marker;
+
+        var letMapClicked = false;
+        function onMapClick(e) {
+            if (marker) {
+                map.removeLayer(marker);
+            }
+
+            marker = L.marker(e.latlng).addTo(map)
+                .bindPopup("You clicked the map at " + e.latlng.toString()).openPopup();
+
+                fetch('/eagri/clients/monitor/list')
+        .then(response => response.json())
+        .then(data => {
+          data.forEach(function (esp) {
+            console.info(esp);
+            var espLatitude = esp.agricultureZone.latitude;
+            var espLongitude = esp.agricultureZone.longitude;
+            var macAddress = esp.macaddress;
+            var country = esp.agricultureZone.country;
+            var region = esp.agricultureZone.region;
+            var city = esp.agricultureZone.city;
+
+            var marker = L.marker([espLatitude, espLongitude] )
+              .bindPopup('Mac Address: ' + macAddress + '<br>' + 'Country: ' + country+ '<br>' + 'City: ' + city+ '<br>' + 'Region: ' + region+ '<br>' + 'longitude: ' + espLongitude + '<br>' +'   latitude: ' + espLatitude)
+              .addTo(map);
+          });
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+        
+            // Send location data to controller
+            var latitude = e.latlng.lat;
+            var longitude = e.latlng.lng;
+            const apiKey = 'd912178d0598502d5d6199eecf98e890';
+
+            document.getElementById('latitude').value = latitude;
+            document.getElementById('longitude').value = longitude;
+
+            fetch('https://api.openweathermap.org/data/2.5/weather?lat=' + latitude + '&lon=' + longitude + '&appid=' + apiKey)
+                .then(function (resp) { return resp.json() }) // Convert data to json
+                .then(function (data) {
+                    var city = data.name;
+                    console.log(data);
+                    var country = data.sys.country;
+                    document.getElementById('country').value = country;
+                    document.getElementById('city').value = city;
+                });
+
+            letMapClicked = true;
+        } map.on('click', onMapClick);
+
+        document.getElementById('form').addEventListener('submit', function (event) {
+            if (letMapClicked == false) {
+                event.preventDefault();
+                var alertMessage = document.getElementById('alertMessage');
+                alertMessage.style.display = 'block'; // Show the alert
+            }
+        });
+
+    </script>
+    <script th:inline="javascript">
+
+        var successMessage = /*[[${message}]]*/ "";
+        if (successMessage) {
+            window.alert(successMessage);
+        }
+
+        document.getElementById("openModalBtn").addEventListener("click", function () {
+            // Clear previous options from the select element
+            var espSelect = document.getElementById("espSelect");
+            espSelect.innerHTML = "";
+
+            fetch('/eagri/clients/monitor/list')
+                .then(response => response.json())
+                .then(data => {
+                    // Populate options dynamically
+                    data.forEach(function (esp) {
+                        var option = document.createElement("option");
+                        option.value = esp.macaddress;
+                        option.text = esp.macaddress;
+                        espSelect.appendChild(option);
+                    });
+                    $('#espModal').modal('show');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+
+        document.getElementById("deleteBtn").addEventListener("click", function () {
+            var selectedMac = document.getElementById("espSelect").value;
+            fetch('/eagri/clients/monitor/delete/' + selectedMac, {
+                method: 'POST',
+                body: new URLSearchParams({
+                    mac: selectedMac
+                })
+            })
+                .then(response => response.text())
+                .then(data => {
+                    window.alert(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+
+            // Close the modal
+            $('#espModal').modal('hide');
+        });
+
+        var espHistory = /*[[${espHistory}]]*/[];
+
+        // Extract the required data for the charts
+        var timeLabels = espHistory.map(esp => {
+            var date = new Date(esp.time);
+            var year = date.getFullYear();
+            var month = String(date.getMonth() + 1).padStart(2, '0');
+            var day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        });
+        var temperatureData = espHistory.map(esp => esp.temperature);
+        var humidityData = espHistory.map(esp => esp.humidity);
+        var rainData = espHistory.map(esp => esp.rain);
+
+        // Create the line chart for temperature using Chart.js
+        var temperatureCtx = document.getElementById('temperatureChart').getContext('2d');
+        new Chart(temperatureCtx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,
+                datasets: [
+                    {
+                        label: 'Temperature',
+                        data: temperatureData,
+                        backgroundColor: '#FF0000',
+                        borderColor: '#F00000',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        },
+                        ticks: {
+                            color: '#e74c3c'
+                        }
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Temperature (°C)'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Temperature chart',
+                        font: {
+                            size: 16
+                        }
+                    }
+                }
+            }
+        });
+
+        // Create the line chart for humidity using Chart.js
+        var humidityCtx = document.getElementById('humidityChart').getContext('2d');
+        new Chart(humidityCtx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,
+                datasets: [
+                    {
+                        label: 'Humidity',
+                        data: humidityData,
+                        backgroundColor: 'orange',
+                        borderColor: 'orange',
+                        // lineTension: 4
+                        borderWidth: 1
+
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        },
+                        ticks: {
+                            color: 'orange'
+                        }
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Humdity (%)'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Humidity chart',
+                        font: {
+                            size: 16
+                        }
+                    }
+                }
+
+            }
+        });
+
+        // Create the line chart for rain using Chart.js
+        var rainCtx = document.getElementById('rainChart').getContext('2d');
+        new Chart(rainCtx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,
+                datasets: [
+                    {
+                        label: 'Rain',
+                        data: rainData,
+                        backgroundColor: '#2B32B2',
+                        borderColor: '#1488CC',
+                        borderWidth: 1
+                        // fill: 'origin' // or set it to true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        },
+                        ticks: {
+                            color: '#1488CD'
+                        }
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Precipitation (mm)'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Rain chart',
+                        font: {
+                            size: 18
+                        }
+                    }
+                }
+            }
+        });
+
+        setTimeout(function () {
+            var canvas = document.getElementById('temperatureChart');
+            canvas.style.backgroundColor = 'white';
+            canvas.style.maxWidth = '760px';
+            canvas.style.boxShadow = '0px 2px 6px rgba(0, 0, 0, 0.1)';
+            canvas.style.marginBottom = "30px";
+            canvas.style.marginRight = "30px";
+            canvas.style.maxHeight = "600px";
+            canvas.style.height = "400px";
+            canvas.style.borderRadius = '20px';
+            canvas.style.boxShadow = 'rgba(0, 0, 0, 0.24) 0px 3px 8px';
+
+            canvas = document.getElementById('humidityChart');
+            canvas.style.backgroundColor = 'white';
+            canvas.style.maxWidth = '760px';
+            canvas.style.boxShadow = '0px 2px 6px rgba(0, 0, 0, 0.1)';
+            canvas.style.marginBottom = "30px";
+            canvas.style.marginRight = "20px";
+            canvas.style.marginLeft = "0px";
+            canvas.style.maxHeight = "600px";
+            canvas.style.borderRadius = '20px';
+            canvas.style.height = "400px";
+            canvas.style.boxShadow = 'rgba(0, 0, 0, 0.24) 0px 3px 8px';
+
+            canvas = document.getElementById('rainChart');
+            canvas.style.backgroundColor = 'white';
+            canvas.style.maxWidth = '100%';
+            canvas.style.boxShadow = '0px 2px 6px rgba(0, 0, 0, 0.1)';
+            canvas.style.marginBottom = "30px";
+            canvas.style.marginRight = "12px";
+            canvas.style.maxHeight = "650px";
+            canvas.style.width = "100%";
+            canvas.style.borderRadius = '20px';
+            canvas.style.boxShadow = 'rgba(0, 0, 0, 0.24) 0px 3px 8px';
+
+
+        }, 500);
+
+    </script>
+
+</body>
+
+</html>

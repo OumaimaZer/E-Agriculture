@@ -1,0 +1,103 @@
+input[type="text"],
+input[type="password"]{
+  background: none;
+  display: block;
+  border: 3px solid green;
+  padding: 14px 10px;
+  width: 250px;
+  border-radius: 15px;
+  transition: all .2s ease-in ;
+  margin: 8px 0;
+}
+input[type="password"]{
+  margin-bottom: 15px;
+}
+button[type="submit"] {
+  width: 100%;
+  background-color: rgb(69, 138, 69);
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+}
+button[type="submit"]:hover{
+  background-color: green;
+}
+form{
+  border-radius: 10px;
+  width : 300px;
+  padding:30px;
+  box-shadow: brown;
+  background-color: beige;
+  
+}
+.container{
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+body{
+  background-image: url("/images/background.jpg");
+  background-size: cover;
+  background-position: left;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+h3{
+  color: rgb(8, 63, 12);
+  align-self: center;
+  font-size: larger;
+  margin-bottom: 22px;
+}
+
+.login_form input[type="text"]:focus,
+.login_form input[type="password"]:focus{
+  width: 270px;
+  border-color:brown ;
+}
+.pass_eye{
+  margin-left: -50px;
+  cursor: pointer;
+}
+label{
+  font-size: 19 ;
+}
+*{
+  font-family: sans-serif ;
+}
+.login_form input[type="checkbox"]{
+  margin-left: 50px;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+.option{
+  font-size: 14px;
+  margin-top: 15px;
+  font-size: 15px;
+}
+a{
+  color: brown;
+}
+a:hover{
+  color: rgb(105, 26, 26);
+}
+.radio{
+  margin-bottom: 10px;
+  display: flex;
+  margin-top: 10px;
+}
+#rememberMe{
+  padding-left: 0%;
+  margin-left: 0%;
+}
+.remember_me{
+  margin-top: 10px;
+}
+.type{
+  margin-left: 50px;
+}
+.client{
+  margin-left: 70px;
+}

@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+    integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+    integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+    integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+    crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <title>Home</title>
+
+  <link rel="stylesheet" href="/css/fragments.css">
+  <style>
+    .temperature,
+    .rain,
+    .precipitation {
+      font-size: 1.1em;
+      margin-top: 10px;
+    }
+
+    .forecast-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 20px auto;
+      max-width: max-content;
+    }
+
+    .day {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 108px;
+      height: 170px;
+      background-color: #f5f5f5;
+      border-radius: 10px;
+      margin: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .date {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .tbl-header th {
+      padding: 10px;
+      font-weight: bold;
+      text-align: left;
+      border-bottom: 1px solid #dee2e6;
+      color: #d36326;
+    }
+
+    .tbl-content td {
+      padding: 10px;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .table-responsive {
+      max-height: 300px;
+      overflow-y: auto;
+      margin: 30px;
+    }
+
+    .container {
+      margin: 20px;
+      margin-right: 0%;
+      max-height: fit-content;
+      padding-right: 0%;
+      margin-bottom: 5%;
+
+    }
+
+    .table {
+      width: 95%;
+      margin: 10px;
+      color: #212529;
+      background-color: transparent;
+      border-collapse: collapse;
+      margin-bottom: 10% !important;
+
+    }
+
+    .table thead th {
+      color: #fff;
+            background-color: rgb(107, 165, 56);
+            font-weight: bolder;
+    }
+
+    .table tbody+tbody {
+      border-top: 2px solid #dee2e6;
+    }
+
+    body {}
+
+    .table td,
+    .table th {
+      padding: .75rem;
+      vertical-align: top;
+      border-top: 1px solid #dee2e6;
+    }
+
+    td .hour {
+      color: grey;
+      font-weight: bolder;
+    }
+
+    table {
+      background-color: #f4e9e379 !important;
+
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .map-container {
+      /* overflow:hidden; */
+      position: relative;
+      width: 100%;
+      height: 350px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 10px;
+      padding-right: 20px;
+      padding-left: 0;
+    }
+
+    #submitbtn {
+      margin-left: 22px;
+      margin-top: 10px;
+    }
+
+    #map {
+      height: 350px;
+      width: 95%;
+      margin-left: 0;
+      position: absolute;
+    }
+
+    label {
+      font-size: larger;
+      font-weight: bolder;
+    }
+
+    .table-responsive{
+      margin-bottom: 50px !important;
+      padding-bottom: 50px !important;
+    }
+    body{
+      padding-bottom: 20px !important;
+    }
+    
+    .chart-pair {
+      display: flex;
+      margin-bottom: 30px;
+    }
+
+    .chart-pair>div {
+      flex: 1;
+      margin-right: 20px;
+    }
+
+    .charts-container {
+      padding-left: 20px;
+    }
+
+    * {
+      font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    }
+
+    /* ADDED FOR FORECAST */
+
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    forecast-container {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      flex-wrap: nowrap;
+      height: 100vh;
+      overflow-x: scroll;
+    }
+
+    .box {
+      width: 13vw;
+      height: 40vh;
+      border-radius: 5px;
+      box-shadow: 0 2px 30px rgba(black, 0.2);
+      /* background: darken(#92583c, 20%); */
+      position: relative;
+      overflow: hidden;
+      transform: translate3d(0, 0, 0);
+      min-width: fit-content;
+      min-height: 300px;
+      margin-right: 10px;
+    }
+
+    .wave {
+      opacity: 0.3;
+      position: absolute;
+      top: 120%;
+      left: 50%;
+      background: rgb(82, 163, 230);
+      width: 500px;
+      height: 500px;
+      margin-left: -250px;
+      margin-top: -250px;
+      transform-origin: 50% 48%;
+      border-radius: 43%;
+      animation: drift 3000ms infinite linear;
+      z-index: 1;
+    }
+
+    .wave.-three {
+      animation: drift 5000ms infinite linear;
+      z-index: 2 !important;
+      opacity: 0.2;
+    }
+
+    .wave.-two {
+      animation: drift 7000ms infinite linear;
+      opacity: 0.1;
+      z-index: 3 !important;
+    }
+
+    .box:after {
+      content: "";
+      display: block;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 11;
+      transform: translate3d(0, 0, 0);
+    }
+
+    @keyframes drift {
+      from {
+        transform: rotate(0deg);
+      }
+
+      from {
+        transform: rotate(360deg);
+      }
+    }
+
+    .info {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 45%;
+      z-index: 4;
+    }
+
+    .location {
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .date {
+      text-align: center;
+      margin-top: 5%;
+      color: lighten(grey, 10%);
+      font-size: 80%;
+    }
+
+    .temp {
+      margin-top: 10%;
+      text-align: center;
+    }
+
+    .weathercon {
+      height: 55%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 3em;
+      background-color: #f4e9e379;
+    }
+
+    @media (max-width: 600px) {
+      .box {
+        width: 70vw;
+        height: 60vh;
+      }
+
+      .wave {
+        top: 85%;
+      }
+
+      .weathercon {
+        font-size: 5em;
+      }
+
+      .info {
+        font-size: 1.5rem;
+      }
+    }
+
+    @media (max-height: 500px) {
+      .box {
+        height: 70vh;
+      }
+
+      .wave {
+        top: 115%;
+      }
+    }
+
+    body>span {
+      width: 100vw;
+      text-align: center;
+      color: grey;
+    }
+    body { 
+  background: url(/iamges/secondBack.png) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+  </style>
+</head>
+
+<body>
+  <div th:include="fragments :: navigation"></div>
+  <div th:include="fragments :: deleteModal"></div>
+
+  <label for="map" class="form-label" style="margin-top: 10px; margin-left: 20px;">Choose a different zone</label>
+  <div class="map-container">
+    <div id="map"></div>
+  </div>
+
+  <form th:action="@{/eagri/clients/submit}" method="POST">
+    <input type="hidden" id="latitude" name="latitude" th:value="${latitude}">
+    <input type="hidden" id="longitude" name="longitude" th:value="${longitude}">
+    <button type="submit" id="submitbtn" class="btn btn-outline-success">Submit</button>
+  </form>
+
+  <label style="margin: 20px;">Weather history of the past year</label>
+
+  <div class="charts-container">
+    <div class="chart-pair">
+      <div>
+        <canvas id="tempChart" class="canvas"></canvas>
+      </div>
+      <div>
+        <canvas id="humidChart" class="canvas"></canvas>
+      </div>
+    </div>
+    <div class="chart-pair">
+      <div>
+        <canvas id="precipitationChart" class="canvas"></canvas>
+      </div>
+      <div>
+        <canvas id="soilChart" class="canvas"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <label for="container" style="margin-top: 10px; margin-left: 20px;">This week's forecast</label>
+
+  <div class="forecast-container">
+    <div class='box' th:each="day, i : ${forecast}" th:unless="${i.index == 0}">
+      <div class='wave -one'></div>
+      <div class='wave -two'></div>
+      <div class='wave -three'></div>
+      <div class="weathercon"><i class="fas fa-sun-cloud" style="color: #d36326;"></i></div>
+      <div class="info">
+        <h2 class="location" th:text="${day.date}"></h2>
+        <p class="date" th:text="${day.precipitation+' mm'}"> </p>
+        <p class="date" th:text="${day.windspeed+' km/h'}"> </p>
+        <!-- <p class="date" th:text="${day.humidity}"> </p> -->
+        <h5 class="temp" th:text="${day.temp_min+' | '+day.temp_max + '°C'}"></h5>
+      </div>
+    </div>
+  </div>
+
+  <label for="table-responsive" style="margin-top: 10px; margin-left: 20px;">Weather data hourly</label>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr class="tbl-header">
+          <th>Hour</th>
+          <th>Temperature</th>
+          <th>Humidity</th>
+          <th>Pressure</th>
+          <th>Precipitation</th>
+          <th>Rain</th>
+        </tr>
+      </thead>
+      <tbody class="tbl-content" id="weatherTableBody">
+      </tbody>
+    </table>
+  </div>
+
+  <script th:inline="javascript">
+
+    // Delete modal
+    $(document).ready(function () {
+      $('a[data-toggle="modal"]').click(function (e) {
+        e.preventDefault();
+        var target = $(this).attr('href');
+        $(target).modal('show');
+      });
+    });
+    // End delete modal
+
+    var data = /*[[${history}]]*/[];
+
+    console.log(data);
+    function formatDate(date) {
+      var year = date.getFullYear();
+      var month = padZero(date.getMonth() + 1);
+      var day = padZero(date.getDate());
+      return year + '-' + month + '-' + day;
+    }
+
+    function padZero(number) {
+      return number < 10 ? '0' + number : number;
+    }
+
+
+    // Calculate the average of each week
+    var weeklyData = [];
+    var week = [];
+    var sum = 0;
+    for (var i = 0; i < data.length; i++) {
+      sum += data[i].temp;
+      week.push(data[i].temp);
+      if ((i + 1) % 24 === 0) { // Assuming 24 data points per day
+        var average = sum / 24;
+        weeklyData.push(average);
+        week = [];
+        sum = 0;
+      }
+    }
+    // End calculations
+
+    // Get weekly labels
+    function getWeeklyLabels(data) {
+      var labels = [];
+      var weekLabel = '';
+      for (var i = 0; i < data.length; i++) {
+        if ((i + 1) % (24 * 7) === 0) { // Assuming 24 data points per day
+          var date = new Date(data[i].date);
+          weekLabel = formatDate(date);
+          console.log(weekLabel);
+          labels.push(weekLabel);
+        }
+      }
+      return labels;
+    }
+    //  End
+
+    // Temperature canvas
+    const tempChart = document.getElementById('tempChart').getContext('2d');
+
+    // Temperature chart
+    new Chart(tempChart, {
+      type: 'line',
+      data: {
+        labels: getWeeklyLabels(data),  
+        datasets: [{
+          label: 'Temperature',
+          data: weeklyData,
+          backgroundColor: '#FF0000',
+          borderColor: '#F00000',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          x: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Time'
+            },
+            ticks: {
+              color: '#e74c3c'
+            }
+          },
+          y: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Temperature (°C)'
+            }
+          }
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'Temperature chart',
+            font: {
+              size: 16
+            }
+          }
+        }
+      }
+    });
+    // End temperature chart
+
+    // Humidity canvas
+    const humidChart = document.getElementById('humidChart').getContext('2d');
+
+    var weeklyDataHumid = [];
+
+    for (var i = 0; i < data.length; i++) {
+      sum += data[i].humidity;
+      week.push(data[i].humidity);
+      if ((i + 1) % 24 === 0) { // Assuming 24 data points per day
+        var average = sum / 24;
+        weeklyDataHumid.push(average);
+        week = [];
+        sum = 0;
+      }
+    }
+
+    // humidity chart
+    new Chart(humidChart, {
+      type: 'line',
+      data: {
+        labels: getWeeklyLabels(data), // Use custom function to generate weekly labels
+        datasets: [{
+          label: 'Humidity',
+          data: weeklyDataHumid,
+          backgroundColor: 'orange',
+          borderColor: 'orange',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          x: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Time'
+            },
+            ticks: {
+              color: 'orange'
+            }
+          },
+          y: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Humdity (%)'
+            }
+          }
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'Humidity chart',
+            font: {
+              size: 16
+            }
+          }
+        }
+      }
+    });
+    // End humidity chart
+
+    // Precipitation canvas
+    const precipChart = document.getElementById('precipitationChart').getContext('2d');
+
+    var weeklyDataPrecip = [];
+
+    for (var i = 0; i < data.length; i++) {
+      sum += data[i].precipitation;
+      week.push(data[i].precipitation);
+      if ((i + 1) % 24 === 0) {
+        var average = sum / 24;
+        weeklyDataPrecip.push(average);
+        week = [];
+        sum = 0;
+      }
+    }
+
+    // Precipitation chart
+    new Chart(precipChart, {
+      type: 'line',
+      data: {
+        labels: getWeeklyLabels(data), // Use custom function to generate weekly labels
+        datasets: [{
+          label: 'Precipitation',
+          data: weeklyDataPrecip,
+          backgroundColor: '#2B32B2',
+          borderColor: '#1488CC',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          x: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Time'
+            },
+            ticks: {
+              color: '#1488CD'
+            }
+          },
+          y: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Precipitation (mm)'
+            }
+          }
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'Precipitation chart',
+            font: {
+              size: 16
+            }
+          }
+        }
+      }
+    });
+    // End precipitation chart
+
+    // Soil chart
+    const soilChart = document.getElementById('soilChart').getContext('2d');
+
+    var weeklyDataSoil = [];
+
+    for (var i = 0; i < data.length; i++) {
+      sum += data[i].soil;
+      week.push(data[i].soil);
+      if ((i + 1) % 24 === 0) {
+        var average = sum / 24;
+        weeklyDataSoil.push(average);
+        week = [];
+        sum = 0;
+      }
+    }
+
+    // Soil chart
+    new Chart(soilChart, {
+      type: 'line',
+      data: {
+        labels: getWeeklyLabels(data), // Use custom function to generate weekly labels
+        datasets: [{
+          label: 'Soil',
+          data: weeklyDataSoil,
+          backgroundColor: 'brown',
+          borderColor: '#a34210',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          x: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Time'
+            },
+            ticks: {
+              color: '#a34210'
+            }
+          },
+          y: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Soil (°C)'
+            }
+          }
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'Soil chart',
+            font: {
+              size: 16
+            }
+          }
+        }
+      }
+    });
+    // End soil chart
+
+    setTimeout(function () {
+      var canvas = document.getElementById('tempChart');
+      canvas.style.backgroundColor = 'white';
+      canvas.style.maxWidth = '760px';
+      canvas.style.marginBottom = '30px';
+      canvas.style.marginRight = '12px';
+      canvas.style.maxHeight = '760px';
+      canvas.style.borderRadius = '20px';
+      canvas.style.boxShadow = 'rgba(0, 0, 0, 0.24) 0px 3px 8px';
+
+      canvas = document.getElementById('humidChart');
+      canvas.style.backgroundColor = 'white';
+      canvas.style.maxWidth = '760px';
+      canvas.style.marginBottom = '30px';
+      canvas.style.marginRight = '12px';
+      canvas.style.maxHeight = '760px';
+      canvas.style.borderRadius = '20px';
+      canvas.style.boxShadow = 'rgba(0, 0, 0, 0.24) 0px 3px 8px';
+
+      canvas = document.getElementById('precipitationChart');
+      canvas.style.backgroundColor = 'white';
+      canvas.style.maxWidth = '100%';
+      canvas.style.marginBottom = '30px';
+      canvas.style.marginRight = '12px';
+      canvas.style.maxHeight = '760px';
+      canvas.style.borderRadius = '20px';
+      canvas.style.boxShadow = 'rgba(0, 0, 0, 0.24) 0px 3px 8px';
+
+      canvas = document.getElementById('soilChart');
+      canvas.style.backgroundColor = 'white';
+      canvas.style.maxWidth = '100%';
+      canvas.style.marginBottom = '30px';
+      canvas.style.marginRight = '12px';
+      canvas.style.maxHeight = '760px';
+      canvas.style.borderRadius = '20px';
+      canvas.style.boxShadow = 'rgba(0, 0, 0, 0.24) 0px 3px 8px';
+
+    }, 500);
+
+
+    // Current weather
+    var tableBody = document.getElementById("weatherTableBody");
+    var weatherData = /*[[${current}]]*/[];
+
+    for (var i = 0; i < weatherData.length; i++) {
+      var weather = weatherData[i];
+      var hour = (i % 24).toString().padStart(2, "0") + ":00"; // restart hour at 00:00 after 23:00
+      var row = document.createElement("tr");
+      row.innerHTML = "<td class='hour'>" + hour + "</td>" +
+        "<td>" + weather.temp + "</td>" +
+        "<td>" + weather.humidity + "</td>" +
+        "<td>" + weather.pressure + "</td>" +
+        "<td>" + weather.precipitation + "</td>" +
+        "<td>" + weather.rain + "</td>";
+      tableBody.appendChild(row);
+
+    }
+
+
+  </script>
+
+  <script>
+    var map = L.map('map').setView([31.7917, -7.0926], 5);
+
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    //search box
+    L.Control.geocoder().addTo(map);
+
+    var marker;
+
+    // let customIcon = {
+    //   iconUrl:"https://image.flaticon.com/icons/png/512/1397/1397898.png",
+    //   iconSize:[40,40]
+    // }
+    // let markerIcon = L.icon(customIcon);
+    
+    fetch('/eagri/clients/user')
+  .then(response => response.json())
+  .then(currentUser => {
+    var latitude = currentUser.agricultureZone.latitude;
+    var longitude = currentUser.agricultureZone.longitude;
+    var country = currentUser.agricultureZone.country;
+    var region = currentUser.agricultureZone.region;
+    var city = currentUser.agricultureZone.city;
+
+    var marker = L.marker([latitude, longitude])
+      .bindPopup('Your current agriculture zone : <br/> Country: ' + country + '<br>' + 'City: ' + city + '<br>' + 'Region: ' + region + '<br>' + 'longitude: ' + longitude + '<br>' + 'latitude: ' + latitude)
+      .addTo(map);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+
+  fetch('/eagri/clients/monitor/list')
+        .then(response => response.json())
+        .then(data => {
+          data.forEach(function (esp) {
+            var espLatitude = esp.agricultureZone.latitude;
+            var espLongitude = esp.agricultureZone.longitude;
+            var macAddress = esp.macaddress;
+            var country = esp.agricultureZone.country;
+            var region = esp.agricultureZone.region;
+            var city = esp.agricultureZone.city;
+
+            var marker = L.marker([espLatitude, espLongitude] )
+              .bindPopup('Mac Address: ' + macAddress + '<br>' + 'Country: ' + country+ '<br>' + 'City: ' + city+ '<br>' + 'Region: ' + region+ '<br>' + 'longitude: ' + espLongitude + '<br>' +'   latitude: ' + espLatitude)
+              .addTo(map);
+          });
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    
+
+    function onMapClick(e) {
+      if (marker) {
+        map.removeLayer(marker);
+      }
+
+      marker = L.marker(e.latlng).addTo(map)
+        .bindPopup("You clicked the map at " + e.latlng.toString()).openPopup();
+
+      // Send location data to controller
+      var latitude = e.latlng.lat;
+      var longitude = e.latlng.lng;
+      const apiKey = 'd912178d0598502d5d6199eecf98e890';
+
+      document.getElementById('latitude').value = latitude;
+      document.getElementById('longitude').value = longitude;
+
+
+      fetch('https://api.openweathermap.org/data/2.5/weather?lat=' + latitude + '&lon=' + longitude + '&appid=' + apiKey)
+        .then(function (resp) { return resp.json() }) // Convert data to json
+        .then(function (data) {
+        })
+    }
+    map.on('click', onMapClick);
+  </script>
+
+</body>
+
+</html>

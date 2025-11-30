@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+ 
+  <div th:fragment="navigation">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: rgb(202, 202, 157);">
+      <div class="container-fluid">
+
+        <a class="navbar-brand">
+          <img src="/images/vertical-logo.png" alt="Logo" id="logo" class="">
+          <span id="navlabel"></span>
+        </a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navLinks">
+            <li class="nav-item">
+              <a class="nav-link " aria-current="page" th:href="@{/eagri/clients/}">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " th:href="@{/eagri/clients/plantSuggestion}">Plants</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " th:href="@{/eagri/clients/monitoring/}">Monitoring</a>
+            </li> 
+          </ul>
+        </div>
+        <div class="d-flex ml-auto">
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle btn-success" type="button" id="dropdownMenuButton1"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Your settings
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+              <li>
+                <a th:href="@{/eagri/clients/user/updateUser}" style="text-decoration: none;"><button type="button"
+                    class="dropdown-item">Update your account</button></a>
+              </li>
+              <li>
+                <form method="GET" th:action="@{/eagri/clients/user/resetPassword}">
+                  <input type="hidden" name="update" value="true">
+                  <button type="submit" class="dropdown-item">Reset your password</button>
+                </form>
+              </li>
+              <li id="dleteli">
+                <a href="#modal" role="button" data-toggle="modal" class="delete">Delete your account</a>
+              </li>
+            </ul>
+          </div>
+          <form class="d-flex ml-3" th:action="@{/logout}" style="margin-left: 6px;">
+            <button class="btn btn-outline-success" type="submit">Logout</button>
+          </form>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <div th:fragment="deleteModal">
+    <!-- popup -->
+    <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="modalLabel">Delete account</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete your account permanently?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+              style="background-color: #28a745;">Cancel</button>
+            <form method="GET" th:action="@{/eagri/clients/user/deleteUser}">
+              <button type="submit" class="btn btn-danger" data-toggle="modal">Delete your account</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>

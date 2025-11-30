@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--meta hhtp-equiv="Content-type" content="text/html; charset=UTF-8"-->
+  <title>Login</title>
+
+  <style>
+    input[type="text"],
+    input[type="password"] {
+      background: none;
+      display: block;
+      border: 3px solid green;
+      padding: 14px 10px;
+      width: 250px;
+      border-radius: 15px;
+      transition: all .2s ease-in;
+      margin: 8px 0;
+    }
+
+    input[type="password"] {
+      margin-bottom: 15px;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      background-color: rgb(69, 138, 69);
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      cursor: pointer;
+    }
+
+    button[type="submit"]:hover {
+      background-color: green;
+    }
+
+    form {
+      border-radius: 10px;
+      width: 300px;
+      padding: 30px;
+      box-shadow: brown;
+      background-color: beige;
+
+    }
+
+    .container {
+      display: flex;
+      height: 100vh;
+      align-items: center;
+      justify-content: center;
+    }
+
+    body {
+      background-image: url("/images/background.jpg");
+      background-size: cover;
+      background-position: left;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+
+    h3 {
+      color: rgb(8, 63, 12);
+      align-self: center;
+      font-size: larger;
+      margin-bottom: 22px;
+    }
+
+    .login_form input[type="text"]:focus,
+    .login_form input[type="password"]:focus {
+      width: 270px;
+      border-color: brown;
+    }
+
+    .pass_eye {
+      margin-left: -50px;
+      cursor: pointer;
+    }
+
+    label {
+      font-size: 19;
+    }
+
+    * {
+      font-family: sans-serif;
+    }
+
+    .login_form input[type="checkbox"] {
+      margin-left: 50px;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+
+    .option {
+      font-size: 14px;
+      margin-top: 15px;
+      font-size: 15px;
+    }
+
+    a {
+      color: brown;
+    }
+
+    a:hover {
+      color: rgb(105, 26, 26);
+    }
+
+    .radio {
+      margin-bottom: 10px;
+      display: flex;
+      margin-top: 10px;
+    }
+
+    #rememberMe {
+      padding-left: 0%;
+      margin-left: 0%;
+    }
+
+    .remember_me {
+      margin-top: 10px;
+    }
+
+    .type {
+      margin-left: 50px;
+    }
+
+    .client {
+      margin-left: 70px;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container">
+
+    <form class="login_form" id="login" th:action="@{/eagri/clients/auth/login}" method="POST" th:object="${user}">
+      <div class="form_message form_message--success"></div>
+      <div id="popup"
+        style="display: none; border-style: solid; padding: 5px; margin: 10px; color: red; background-color: rgba(255, 0, 0, 0.221);">
+        <p id="message" th:text="${message}"></p>
+      </div>
+      <h3>Log in</h3>
+
+      <label for="email">Email</label><br>
+      <input id="email" type="text" name="email" placeholder="Enter your email"><br>
+      <label for="password">Password</label><br>
+      <input id="password_id" type="password" name="password" required=""
+        placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;">
+      <i class="pass_eye" id="pass_eye_id"></i>
+      <div class="buttons" style="background-color:#f1f1f1">
+        <button id="submit-button" type="submit" onclick="remember()">Sign in</button>
+      </div>
+      <div class="remember_me">
+        <input type="checkbox" id="rememberMe"><label for="rememberMe"> Remember me</label>
+      </div>
+      <div class="option">
+        <label for="create">Not registered yet? </label><a th:href="@{/eagri/clients/auth/signup}">Create an account</a>
+      </div>
+    </form>
+  </div>
+
+  <script th:inline="javascript">
+
+    var message = document.getElementById("message").textContent;
+    if (message) {
+      document.getElementById("popup").style.display = "block";
+    }
+
+    const pass_eye_id = document.querySelector('#pass_eye_id');
+    const password = document.querySelector('password_id');
+    pass_eye_id.addEventListener('click', function (e) {
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      this.classList.toggle('pass_eye');
+    });
+
+    const check = document.getElementById("rememberMe"), email_in = document.getElementById("email"), pass = document.getElementById("password_id");
+
+    if (localStorage.checkbox && localStorage.checkbox !== "") {
+      check.setAttribute("checked", "checked");
+      email_in.value = localStorage.username;
+      pass.value = localStorage.password;
+    } else {
+      check.removeAttribute("checked");
+      email_in.value = "";
+      pass.value = "";
+    }
+    function remember() {
+      if (check.checked && email_in.value !== "") {
+        localStorage.username = email_in.value;
+        localStorage.password = pass.value;
+        localStorage.checkbox = check.value;
+      } else {
+        localStorage.username = "";
+        localStorage.checkbox = "";
+        localStorage.password = ""
+      }
+    }
+
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <meta charset="utf-8">
+     
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+     integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+     crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+     integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+     crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+
+    <title>Home</title>
+
+  <style>
+      #map { height: 180px; }
+      .logout_button{
+        background-color: #6ba968;
+        color: white;
+        padding: 14px 20px;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+        margin-top: 1px;
+        margin-right: 2px;
+        position:absolute;
+        top:0;
+        right:0;
+      }
+      .logout_button:hover{
+        background-color: #48ab4b;
+      }
+      #map{
+        height: 400px;
+        width: 80%;
+      }
+       #temp{
+        background-color: red;
+       }
+       #weather{
+        background-color: green;
+       }
+    </style>
+
+</head>
+
+<body>
+
+    <header>Welcome to your E-agriculture space</header>
+    
+    <nav>
+    <form action="/eagri/clients/auth/logout" method="POST">
+        <button type="submit" class="logout_button">Logout</button>
+    </form>
+    </nav>
+
+    <div id="map"></div>
+
+    <form th:action="@{/eagri/clients/submit}" method="POST">
+      <input type="hidden" id="latitude" name="latitude" th:value="${latitude}">
+      <input type="hidden" id="longitude" name="longitude" th:value="${longitude}">
+      <button type="submit" class="button" id="submit">Submit</button>
+      <div class="container">
+        <div id="temp" th:text="${data?.temp}"></div>
+        <div id="humidity" th:text="${data?.humidity}"></div>
+        <div id="pressure" th:text="${data?.pressure}"></div>
+        <div id="rain" th:text="${data?.rain}"></div>
+      </div>
+    </form>
+    
+    <!-- test -->
+    <h1>Climate diagram</h1>
+    <canvas id="myChart" height="400px" width="800px"></canvas>
+
+<script>
+    const map = L.map('map').setView([31.7917, -7.0926], 5);
+    
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    //search box
+    L.Control.geocoder().addTo(map);
+
+    const apiKey = "d912178d0598502d5d6199eecf98e890";
+    var marker;
+    var latitude ;
+    var longitude;
+
+    function onMapClick(e) {
+    if (marker) {
+        map.removeLayer(marker);
+    }
+
+    marker = L.marker(e.latlng).addTo(map)
+        .bindPopup("You clicked the map at " + e.latlng.toString()).openPopup();
+
+    // Send location data to controller
+
+    latitude = e.latlng.lat ;
+    longitude = e.latlng.lng ; 
+
+    document.getElementById('latitude').value = latitude;
+    document.getElementById('longitude').value = longitude;
+
+    fetch('https://api.openweathermap.org/data/2.5/weather?lat='+latitude+'&lon='+longitude+'&appid='+apiKey) 
+    .then(function(resp) { return resp.json() }) // Convert data to json
+    .then(function(data) {
+    console.log(data);
+ 
+  })
+  }
+  map.on('click', onMapClick);
+  document.getElementById('submit').addEventListener('click', function() {
+    event.preventDefault();
+    console.log(latitude);
+    // var url = 'https://api.openweathermap.org/data/2.5/onecall?lat='+latitude+'&lon='+longitude+'&appid='+key;
+
+  fetch('https://api.openweathermap.org/data/2.5/weather?lat='+latitude+'&lon='+longitude+'&appid='+apiKey)
+  .then(response => response.json())
+  .then(data => {
+    // Parse the JSON data and retrieve the temperature values
+    const temps = data.list.map(item => item.main.temp);
+    const times = data.list.map(item => item.dt_txt);
+
+    // Create a canvas element and set its attributes
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("id", "myChart");
+
+    // Append the canvas element to the DOM
+    document.body.appendChild(canvas);
+
+    // Create a new chart object
+    const ctx = canvas.getContext("2d");
+    const myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: times,
+        datasets: [{
+          label: 'Temperature',
+          data: temps,
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: false
+            }
+          }]
+        }
+      }
+    });
+  });
+  })
+   </script>
+
+</body>
+</html>
