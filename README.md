@@ -3,32 +3,21 @@
 
 The E-Agriculture Platform is designed to support farmers in Morocco by providing easy access to essential agricultural data and insights to optimize farming practices. The platform serves as a centralized web-based solution, offering local and international farmers a comprehensive set of tools and information for smarter agricultural decision-making.
 
-This project was developed collaboratively by Zerhouani Oumaima and two other contributors, Hanane Malki and Aaya Qadry,combining expertise in web development, IoT, and agricultural research.
+This project was developed collaboratively by me, **Zerhouani Oumaima**, and two other contributors, **Hanane Malki** and **Aaya Qadry**, combining expertise in web development, IoT, and agricultural research.
 
 Through the platform, users can:
-
-Access real-time and historical weather data
-Including temperature, precipitation, humidity, and other factors critical for crop success. The platform displays weather trends through intuitive charts, weekly forecasts, and hourly updates to help farmers plan their activities effectively.
-
-Monitor field conditions in real-time
-Using an ESP32 microcontroller with sensors, the platform provides live updates on temperature, soil moisture, and precipitation from the user’s farm. Users can also track historical data to analyze trends over time and optimize crop management.
-
-Receive personalized crop recommendations
-Based on regional climate data and historical weather records dating back to 1970, the platform suggests the most suitable crops for the current season and the user’s specific location. This helps farmers select crops that maximize productivity while reducing risk.
-
-Access detailed plant information
-By selecting a specific crop, users can obtain comprehensive details, including scientific classification, growth duration, and other critical agronomic information.
+-  **Access real-time and historical weather data:** Including temperature, precipitation, humidity, and other factors critical for crop success. The platform displays weather trends through intuitive charts, weekly forecasts, and hourly updates to help farmers plan their activities effectively.
+-  **Monitor field conditions in real-time:** Using an ESP32 microcontroller with sensors, the platform provides live updates on temperature, soil moisture, and precipitation from the user’s farm. Users can also track historical data to analyze trends over time and optimize crop management.
+-  **Receive personalized crop recommendations:** Based on regional climate data and historical weather records dating back to 1970, the platform suggests the most suitable crops for the current season and the user’s specific location. This helps farmers select crops that maximize productivity while reducing risk.
+-  **Access detailed plant information:** By selecting a specific crop, users can obtain comprehensive details, including scientific classification, growth duration, and other critical agronomic information.
 
 ## Objectives
 
 The platform aims to:
-
-Facilitate access to accurate, relevant, and region-specific agricultural data.
-
-Support research and informed decision-making in the agricultural sector.
-
-Improve farmers’ practices by providing actionable insights and recommendations.
-
+-  Facilitate access to accurate, relevant, and region-specific agricultural data.
+-  Support research and informed decision-making in the agricultural sector.
+-  Improve farmers’ practices by providing actionable insights and recommendations.
+  
 The E-Agriculture Platform combines weather monitoring, crop planning, and knowledge dissemination into a single, user-friendly interface, empowering farmers to enhance productivity and sustainability.
 
 ## Intefaces :
@@ -71,7 +60,7 @@ The user can select an agricultural area to view its details:
 
 
 ## Conclusion :
-This final-year project at the École Supérieure de Technologie was a highly enriching experience, guided by Dr. Lahmer Mohammed, whose expertise greatly contributed to its success. The project involved the design and development of a robust and user-friendly agricultural monitoring web application using Spring Boot and Thymeleaf.
+This final-year project at the **École Supérieure de Technologie** was a highly enriching experience, guided by **Dr. Lahmer Mohammed**, whose expertise greatly contributed to its success. The project involved the design and development of a robust and user-friendly agricultural monitoring web application using Spring Boot and Thymeleaf.
 
 The application provides farmers with practical tools such as real-time weather data, crop recommendations tailored to specific regions, and equipment monitoring, helping them optimize decisions and improve productivity. Designed to evolve, future improvements include expanding the plant database, developing mobile applications, and adding features to track planted crops over time.
 
