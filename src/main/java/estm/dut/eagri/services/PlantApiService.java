@@ -17,7 +17,7 @@ import java.util.List;
 public class PlantApiService {
     
     public List<PlantApi> getPlantsFromAPI() throws IOException {
-        String apiUrl="https://trefle.io/api/v1/plants?token=6ceI1nHzNNYimUto7_cyujvFRIJUnycJUu9wY4KUZik";
+        String apiUrl="THE API URL";
         List<PlantApi> plantsapi = new ArrayList<>();
 
         URL url = new URL(apiUrl);
