@@ -12,7 +12,7 @@
 // @Service
 // public class WeatherService {
     
-//     private final static String api_key="d912178d0598502d5d6199eecf98e890";
+//     private final static String api_key="THE API KEY";
 
 //     public Weather data(double latitude, double longitude) throws IOException {
 //         String url = "http://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&appid=" + api_key;
